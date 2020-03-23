@@ -1,6 +1,7 @@
 package com.softserve.tracking.TrackingService.service;
 
 import com.google.maps.model.LatLng;
+import com.softserve.tracking.TrackingService.repository.RedisRepositoryImpl;
 import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 
@@ -10,13 +11,13 @@ import java.util.UUID;
 public class OptimalRouteService {
 
     private ApiJsonParser parser = new ApiJsonParser();
-    public static AvailableScooters availableScooters = new AvailableScooters();
+    private RedisRepositoryImpl repository;
 
     public JSONObject getPedestrianWay(LatLng userCoordinate, UUID scooterId) {
-        if (availableScooters.getScooter(scooterId).getStatus()) {
+        if (repository.findScooter(scooterId).getStatus()) {
             String url = "https://maps.googleapis.com/maps/api/directions/json?origin="
                     + userCoordinate + "&destination="
-                    + availableScooters.getScooter(scooterId).getCoordinates() +
+                    + repository.findScooter(scooterId).getCoordinates() +
                     "&mode=walking&key=AIzaSyCdfHglvxpOUk20QZvCYXI7RI4HmHD_1zg";
             return parser.parse(url);
         } else {
@@ -25,10 +26,10 @@ public class OptimalRouteService {
     }
 
     public JSONObject getRoadWay(LatLng userCoordinate, UUID scooterId) {
-        if (availableScooters.getScooter(scooterId).getStatus()) {
+        if (repository.findScooter(scooterId).getStatus()) {
             String url = "https://maps.googleapis.com/maps/api/directions/json?origin="
                     + userCoordinate + "&destination="
-                    + availableScooters.getScooter(scooterId).getCoordinates() +
+                    + repository.findScooter(scooterId).getCoordinates() +
                     "&key=AIzaSyCdfHglvxpOUk20QZvCYXI7RI4HmHD_1zg";
             return parser.parse(url);
         } else {
